@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains islandora_fits.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function islandora_fits_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the islandora_fits module.
+    case 'help.page.islandora_fits':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Enables Technical Metadata derivative generation') . '</p>';
+      return $output;
+
+    default:
+  }
+}
