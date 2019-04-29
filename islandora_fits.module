@@ -6,6 +6,9 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\Entity\Vocabulary;
+
 
 /**
  * Implements hook_help().
@@ -21,4 +24,21 @@ function islandora_fits_help($route_name, RouteMatchInterface $route_match) {
 
     default:
   }
+}
+
+/**
+ * Implements hook_install().
+ */
+function islandora_fits_install() {
+    $term_name = 'FITS File';
+    $test_terms = taxonomy_term_load_multiple_by_name($term_name);
+    if (!$test_terms) {
+        $term = Term::create(array(
+            'parent' => [],
+            'name' => $term_name,
+            'vid' => 'islandora_media_use',
+            'description' => 'Technical Metadata associated with an original media file',
+            'field_external_uri' => ['uri' => 'https://projects.iq.harvard.edu/fits'],
+        ))->save();
+    }
 }
