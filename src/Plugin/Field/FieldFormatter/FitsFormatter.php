@@ -79,7 +79,7 @@ class FitsFormatter extends FormatterBase {
     protected function viewValue(FieldItemInterface $item) {
         $fileItem = $item->getValue();
         $file = File::load($fileItem['target_id']);
-        $contents = file_get_contents($file->getFileUri());
+        $contents = utf8_encode(file_get_contents($file->getFileUri()));
         $xml = new \SimpleXMLElement($contents);
         $xml->registerXPathNamespace('fits', 'http://hul.harvard.edu/ois/xml/ns/fits/fits_output');
         $fits_metadata = $this->islandora_fits_child_xpath($xml);
