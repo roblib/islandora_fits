@@ -79,7 +79,13 @@ class FitsFormatter extends FormatterBase {
     protected function viewValue(FieldItemInterface $item) {
         $fileItem = $item->getValue();
         $file = File::load($fileItem['target_id']);
-        $contents = utf8_encode(file_get_contents($file->getFileUri()));
+        $url = Url::fromUri($file->url());
+        $link = Link::fromTextAndUrl("Link to XML", $url);
+        $link = $link->toRenderable();
+        $contents = file_get_contents($file->getFileUri());
+        if (mb_detect_encoding($contents) != 'UTF-8') {
+            $contents = utf8_encode($contents);
+        }
         $xml = new \SimpleXMLElement($contents);
         $xml->registerXPathNamespace('fits', 'http://hul.harvard.edu/ois/xml/ns/fits/fits_output');
         $fits_metadata = $this->islandora_fits_child_xpath($xml);
@@ -133,8 +139,10 @@ class FitsFormatter extends FormatterBase {
 
         $renderable =  [
             '#theme' => 'fits',
+            '#title'  => $this->t("FITS metadata"),
+            '#link' => $link,
             '#data' => $variables['islandora_fits_fieldsets'],
-            '#title'  => $this->t("Fits Metadata"),
+
         ];
         return \Drupal::service('renderer')->render($renderable);
     }

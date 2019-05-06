@@ -51,6 +51,7 @@ function islandora_fits_theme($existing, $type, $theme, $path) {
         'fits' => [
             'variables' => [
                 'title' => 'FITS data',
+                'link' => NULL,
                 'data' => [],
             ],
         ],
