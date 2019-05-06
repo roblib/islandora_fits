@@ -131,8 +131,12 @@ class FitsFormatter extends FormatterBase {
             }
         }
 
-        $output = $variables['islandora_fits_fieldsets'];
-        return render($output);
+        $renderable =  [
+            '#theme' => 'fits',
+            '#data' => $variables['islandora_fits_fieldsets'],
+            '#title'  => $this->t("Fits Metadata"),
+        ];
+        return \Drupal::service('renderer')->render($renderable);
     }
 
     /**

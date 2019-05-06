@@ -14,6 +14,6 @@ configuration:
   derivative_term_uri: 'https://projects.iq.harvard.edu/fits'
   mimetype: application/xml
   args: null
-  destination_media_type: file
+  destination_media_type: fits_technical_metadata
   scheme: public
   path: '[date:custom:Y]-[date:custom:m]/[node:nid]-[term:name].xml'
