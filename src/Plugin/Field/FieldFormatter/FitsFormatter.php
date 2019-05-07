@@ -151,6 +151,11 @@ class FitsFormatter extends FormatterBase {
             '#title' => $this->t("FITS metadata"),
             '#link' => $link,
             '#output' => $output,
+            '#attached' => [
+                'library' => [
+                    'islandora_fits/islandora_fits',
+                ]
+            ]
 
         ];
         return \Drupal::service('renderer')->render($renderable);
