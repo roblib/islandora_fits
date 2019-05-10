@@ -51,7 +51,7 @@ class XMLTransform extends ServiceProviderBase {
                 $variables['islandora_fits_data'][$tool_name] = array();
                 $rows = &$variables['islandora_fits_data'][$tool_name];
                 foreach ($vals_array as $field => $val_array) {
-                    if (!array_key_exists($field, $rows)) {
+                    if (!array_key_exists($field, $rows) && $field != 'Filepath') {
                         $rows[$field] = array(
                             array('data' => Xss::filter($field), 'class' => 'islandora_fits_table_labels'),
                         );
@@ -117,7 +117,7 @@ class XMLTransform extends ServiceProviderBase {
      * @return array
      *   An array containing key/value pairs of fields and data.
      */
-    public function islandora_fits_child_xpath($xml) {
+    private function islandora_fits_child_xpath($xml) {
         $results = $xml->xpath('/*|/*/fits:metadata');
         $output = array();
         foreach ($results as $result) {
@@ -139,7 +139,7 @@ class XMLTransform extends ServiceProviderBase {
      * @param array $output
      *   An array containing key/value pairs of fields and data.
      */
-    public function islandora_fits_children($child, &$output) {
+    private function islandora_fits_children($child, &$output) {
         $grandchildren = $child->xpath('*/*');
 
         if (count($grandchildren) > 0) {
@@ -203,7 +203,7 @@ class XMLTransform extends ServiceProviderBase {
      * @return array
      *   Constructed node name for output.
      */
-    public function islandora_fits_construct_output($node_name, $tool_name) {
+    private function islandora_fits_construct_output($node_name, $tool_name) {
         // Construct an arbitrary string with all capitals in it.
         $capitals = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $name_array = str_split($node_name);

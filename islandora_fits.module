@@ -81,6 +81,7 @@ function islandora_fits_media_presave(MediaInterface $media) {
     $file_id = $media->get('field_media_file')->getValue()[0]['target_id'];
     $file = File::load($file_id);
     $data = file_get_contents($file->getFileUri());
+    //  Adds any new fields to FITS content type.
     $transformer->add_node_fields($data);
     $transformer->populate_node($data, $attached);
     $attached->save();
