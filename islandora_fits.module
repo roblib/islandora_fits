@@ -6,24 +6,26 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\media\MediaInterface;
 use Drupal\taxonomy\Entity\Term;
-use Drupal\taxonomy\Entity\Vocabulary;
+use Drupal\node\Entity\Node;
+use Drupal\file\Entity\File;
 
 
 /**
  * Implements hook_help().
  */
 function islandora_fits_help($route_name, RouteMatchInterface $route_match) {
-  switch ($route_name) {
-    // Main module help for the islandora_fits module.
-    case 'help.page.islandora_fits':
-      $output = '';
-      $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('Enables Technical Metadata derivative generation') . '</p>';
-      return $output;
+    switch ($route_name) {
+        // Main module help for the islandora_fits module.
+        case 'help.page.islandora_fits':
+            $output = '';
+            $output .= '<h3>' . t('About') . '</h3>';
+            $output .= '<p>' . t('Enables Technical Metadata derivative generation') . '</p>';
+            return $output;
 
-    default:
-  }
+        default:
+    }
 }
 
 /**
@@ -57,3 +59,31 @@ function islandora_fits_theme($existing, $type, $theme, $path) {
         ],
     ];
 }
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function islandora_fits_media_presave(MediaInterface $media) {
+    $transformer = \Drupal::getContainer()->get('islandora_fits.transformxml');
+    if ($media->bundle() != 'fits_technical_metadata') {
+        return;
+    }
+    $attached = $media->get('field_attached_fits_node')->referencedEntities()[0];
+    $data_of = $media->get('field_media_of')->referencedEntities()[0];
+    $title = $data_of->getTitle();
+    if (!$attached) {
+        $node = Node::create(['type' => 'fits_technical_metadata']);
+        $node->setTitle("Fits Metadata of $title");
+        $node->save();
+        $media->field_attached_fits_node->target_id = $node->id();
+        $attached = $node;
+    }
+    $file_id = $media->get('field_media_file')->getValue()[0]['target_id'];
+    $file = File::load($file_id);
+    $data = file_get_contents($file->getFileUri());
+    $transformer->add_node_fields($data);
+    $transformer->populate_node($data, $attached);
+    $attached->save();
+}
+
+
