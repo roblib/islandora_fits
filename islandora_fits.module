@@ -5,6 +5,7 @@
  * Contains islandora_fits.module.
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\media\MediaInterface;
 use Drupal\taxonomy\Entity\Term;
@@ -68,23 +69,31 @@ function islandora_fits_media_presave(MediaInterface $media) {
     if ($media->bundle() != 'fits_technical_metadata') {
         return;
     }
-    $attached = $media->get('field_attached_fits_node')->referencedEntities()[0];
-    $data_of = $media->get('field_media_of')->referencedEntities()[0];
-    $title = $data_of->getTitle();
-    if (!$attached) {
-        $node = Node::create(['type' => 'fits_technical_metadata']);
-        $node->setTitle("Fits Metadata of $title");
-        $node->save();
-        $media->field_attached_fits_node->target_id = $node->id();
-        $attached = $node;
-    }
     $file_id = $media->get('field_media_file')->getValue()[0]['target_id'];
     $file = File::load($file_id);
     $data = file_get_contents($file->getFileUri());
-    //  Adds any new fields to FITS content type.
-    $transformer->add_node_fields($data);
-    $transformer->populate_node($data, $attached);
-    $attached->save();
+    //  Adds any new fields to FITS media type.
+    $has_new = $transformer->add_media_fields($data);
+    if (!$has_new) {
+        $transformer->populate_media($data, $media);
+        $media->set('field_complete', TRUE);
+    } else {
+        $media->set('field_complete', FALSE);
+    }
+
 }
+
+
+/**
+ * Implements hook_media_update().
+ */
+function islandora_fits_media_update(MediaInterface $media) {
+    $complete = $media->get('field_complete')->value;
+    if (!$complete) {
+        $media->save();
+    }
+}
+
+
 
 

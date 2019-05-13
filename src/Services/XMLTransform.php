@@ -235,7 +235,8 @@ class XMLTransform extends ServiceProviderBase {
      * @param $input_xml
      * @throws \Drupal\Core\Entity\EntityStorageException
      */
-    public function add_node_fields($input_xml) {
+    public function add_media_fields($input_xml) {
+        $fields_added = FALSE;
         $data = $this->transformFits($input_xml);
         $all_fields = [];
         foreach ($data['#output'] as $datum) {
@@ -243,30 +244,37 @@ class XMLTransform extends ServiceProviderBase {
         }
         $to_process = $this->normalize_names($all_fields);
         foreach ($to_process as $field) {
-            $exists = FieldStorageConfig::loadByName('node', $field['field_name']);
+            $exists = FieldStorageConfig::loadByName('media', $field['field_name']);
             if (!$exists) {
                 $field_storage = FieldStorageConfig::create([
-                    'entity_type' => 'node',
+                    'entity_type' => 'media',
                     'field_name' => $field['field_name'],
                     'type' => 'text',
                 ]);
-                $field_storage->save();
+                 $field_storage->save();
+            }
+            $bundle_fields = $this->entityManager->getFieldDefinitions('media', 'fits_technical_metadata');
+            $bundle_keys = array_keys($bundle_fields);
+            if (!in_array($field['field_name'], $bundle_keys)) {
+                $field_storage = FieldStorageConfig::loadByName('media', $field['field_name']);
                 FieldConfig::create([
                     'field_storage' => $field_storage,
                     'bundle' => 'fits_technical_metadata',
-                    'label' => $field['field_name'],
+                    'label' => $field['field_label'],
                 ])->save();
+                $fields_added = TRUE;
             }
         }
+        return $fields_added;
     }
 
     /**
-     * Populates associated node.
+     * Populates media.
      *
      * @param $input_xml
-     * @param $node
+     * @param $media
      */
-    public function populate_node($input_xml, &$node) {
+    public function populate_media($input_xml, &$media) {
         $data = $this->transformFits($input_xml);
         $all_fields = [];
         foreach ($data['#output'] as $datum) {
@@ -279,9 +287,8 @@ class XMLTransform extends ServiceProviderBase {
             $field_name = substr("field_$normalized", 0, 32);
             $to_add[$field_name] = $field_value;
         }
-
         foreach ($to_add as $field_name => $field_value) {
-            $node->set($field_name, $field_value);
+            $media->set($field_name, $field_value);
         }
     }
 
