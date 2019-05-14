@@ -15,13 +15,15 @@ class XMLTransform extends ServiceProviderBase {
     private $renderer;
     private $entityManager;
     private $forbidden;
+    private $messenger;
 
     /**
      * Constructs a new XMLTransform object.
      */
-    public function __construct($renderer, $entityManager) {
+    public function __construct($renderer, $entityManager, $messenger) {
         $this->renderer = $renderer;
         $this->entityManager = $entityManager;
+        $this->messenger = $messenger;
         $this->forbidden = ['-', ' '];
     }
 
@@ -32,7 +34,12 @@ class XMLTransform extends ServiceProviderBase {
      * @return array
      */
     public function transformFits($input_xml) {
-        $xml = new \SimpleXMLElement($input_xml);
+        try {
+            $xml = new \SimpleXMLElement($input_xml);
+        } catch (\Exception $e) {
+            $this->messenger->addWarning(t('File does not contain valid xml.'));
+            return;
+        }
         $xml->registerXPathNamespace('fits', 'http://hul.harvard.edu/ois/xml/ns/fits/fits_output');
         $fits_metadata = $this->islandora_fits_child_xpath($xml);
         $headers = array(
@@ -277,7 +284,7 @@ class XMLTransform extends ServiceProviderBase {
         foreach ($all_fields as $label => $field_value) {
             $lower = strtolower($label);
             $normalized = str_replace($this->forbidden, '_', $lower);
-            $field_name = substr("field_$normalized", 0, 32);
+            $field_name = substr("fits_$normalized", 0, 32);
             $to_add[$field_name] = $field_value;
         }
         foreach ($to_add as $field_name => $field_value) {
