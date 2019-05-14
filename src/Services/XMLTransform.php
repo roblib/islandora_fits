@@ -7,7 +7,6 @@ use Drupal\Core\DependencyInjection\ServiceProviderBase;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\Entity\FieldConfig;
 
-
 /**
  * Class XMLTransform.
  */
@@ -65,13 +64,11 @@ class XMLTransform extends ServiceProviderBase {
                         }
                     }
                     $table_attributes = array('class' => array('islandora_fits_table'));
-
                     $table = array(
                         'header' => $headers,
                         'rows' => $rows,
                         'attributes' => $table_attributes,
                     );
-
                     $variables['islandora_fits_table'][$tool_name] = $table;
                     $variables['islandora_fits_fieldsets'][$tool_name] = [
                         '#theme' => 'table',
@@ -90,9 +87,7 @@ class XMLTransform extends ServiceProviderBase {
                 'title' => $title,
                 'data' => $fieldset,
             ];
-
         }
-
         $renderable = [
             '#theme' => 'fits',
             '#output' => $output,
@@ -101,7 +96,6 @@ class XMLTransform extends ServiceProviderBase {
                     'islandora_fits/islandora_fits',
                 ]
             ]
-
         ];
         return $renderable;
     }
@@ -189,7 +183,6 @@ class XMLTransform extends ServiceProviderBase {
                 }
             }
         }
-
     }
 
     /**
@@ -251,7 +244,7 @@ class XMLTransform extends ServiceProviderBase {
                     'field_name' => $field['field_name'],
                     'type' => 'text',
                 ]);
-                 $field_storage->save();
+                $field_storage->save();
             }
             $bundle_fields = $this->entityManager->getFieldDefinitions('media', 'fits_technical_metadata');
             $bundle_keys = array_keys($bundle_fields);
@@ -320,7 +313,7 @@ class XMLTransform extends ServiceProviderBase {
         foreach ($names as $label => $field_value) {
             $lower = strtolower($label);
             $normalized = str_replace($this->forbidden, '_', $lower);
-            $field_name = substr("field_$normalized", 0, 32);
+            $field_name = substr("fits_$normalized", 0, 32);
 
             $normalized_names[] = [
                 'field_label' => $label,
@@ -329,5 +322,23 @@ class XMLTransform extends ServiceProviderBase {
             ];
         }
         return $normalized_names;
+    }
+
+    public function check_new($input_xml) {
+        $fields_added = FALSE;
+        $data = $this->transformFits($input_xml);
+        $all_fields = [];
+        foreach ($data['#output'] as $datum) {
+            $all_fields = array_merge($all_fields, $this->harvest_values($datum));
+        }
+        $to_process = $this->normalize_names($all_fields);
+        foreach ($to_process as $field) {
+            $bundle_fields = $this->entityManager->getFieldDefinitions('media', 'fits_technical_metadata');
+            $bundle_keys = array_keys($bundle_fields);
+            if (!in_array($field['field_name'], $bundle_keys)) {
+                $fields_added = TRUE;
+            }
+        }
+        return $fields_added;
     }
 }

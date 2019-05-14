@@ -11,6 +11,7 @@ use Drupal\media\MediaInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\node\Entity\Node;
 use Drupal\file\Entity\File;
+use Drupal\media\Entity\Media;
 
 
 /**
@@ -69,18 +70,18 @@ function islandora_fits_media_presave(MediaInterface $media) {
     if ($media->bundle() != 'fits_technical_metadata') {
         return;
     }
+    $media->set('field_complete', TRUE);
     $file_id = $media->get('field_media_file')->getValue()[0]['target_id'];
     $file = File::load($file_id);
     $data = file_get_contents($file->getFileUri());
     //  Adds any new fields to FITS media type.
-    $has_new = $transformer->add_media_fields($data);
-    if (!$has_new) {
-        $transformer->populate_media($data, $media);
-        $media->set('field_complete', TRUE);
-    } else {
+    $has_new = $transformer->check_new($data);
+    if ($has_new) {
         $media->set('field_complete', FALSE);
     }
-
+    else {
+        $transformer->populate_media($data, $media);
+    }
 }
 
 
@@ -88,9 +89,18 @@ function islandora_fits_media_presave(MediaInterface $media) {
  * Implements hook_media_update().
  */
 function islandora_fits_media_update(MediaInterface $media) {
-    $complete = $media->get('field_complete')->value;
-    if (!$complete) {
-        $media->save();
+    if ($media->bundle() != 'fits_technical_metadata') {
+        return;
+    }
+    if ($media->get('field_complete')->value == FALSE) {
+        $transformer = \Drupal::getContainer()->get('islandora_fits.transformxml');
+        $file_id = $media->get('field_media_file')->getValue()[0]['target_id'];
+        $file = File::load($file_id);
+        $data = file_get_contents($file->getFileUri());
+        $transformer->add_media_fields($data);
+        $new_media = Media::load($media->id());
+        $new_media->set('field_complete', TRUE);
+        $new_media->save();
     }
 }
 
