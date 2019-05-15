@@ -44,7 +44,7 @@ function islandora_fits_install() {
             'field_external_uri' => ['uri' => 'https://projects.iq.harvard.edu/fits'],
         ))->save();
     }
-// Add xml extension if it doesn;t already exist;
+// Add xml extension if it doesn't already exist;
     $field = FieldConfig::load("media.file.field_media_file");
     $fieldSettings = $field->getSettings();
     $extensions = $fieldSettings['file_extensions'];
