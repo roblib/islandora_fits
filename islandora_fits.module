@@ -5,11 +5,10 @@
  * Contains islandora_fits.module.
  */
 
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\media\MediaInterface;
 use Drupal\taxonomy\Entity\Term;
-use Drupal\node\Entity\Node;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 
@@ -45,6 +44,14 @@ function islandora_fits_install() {
             'field_external_uri' => ['uri' => 'https://projects.iq.harvard.edu/fits'],
         ))->save();
     }
+// Add xml extension if it doesn;t already exist;
+    $field = FieldConfig::load("media.file.field_media_file");
+    $fieldSettings = $field->getSettings();
+    $extensions = $fieldSettings['file_extensions'];
+    if (!strpos($extensions, 'xml')) {
+        $fieldSettings['file_extensions'] .= ' xml';
+        $field->set('settings', $fieldSettings);
+    }
 }
 
 /**
@@ -78,8 +85,7 @@ function islandora_fits_media_presave(MediaInterface $media) {
     $has_new = $transformer->check_new($data);
     if ($has_new) {
         $media->set('field_complete', FALSE);
-    }
-    else {
+    } else {
         $transformer->populate_media($data, $media);
     }
 }
