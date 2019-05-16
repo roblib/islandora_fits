@@ -73,6 +73,7 @@ function islandora_fits_theme($existing, $type, $theme, $path) {
  * Implements hook_ENTITY_TYPE_presave().
  */
 function islandora_fits_media_presave(MediaInterface $media) {
+    \Drupal::logger('fits_debug')->notice($media->get('field_complete')->value);
     $transformer = \Drupal::getContainer()->get('islandora_fits.transformxml');
     if ($media->bundle() != 'fits_technical_metadata') {
         return;
@@ -90,11 +91,11 @@ function islandora_fits_media_presave(MediaInterface $media) {
     }
 }
 
-
 /**
  * Implements hook_media_update().
  */
 function islandora_fits_media_update(MediaInterface $media) {
+    \Drupal::logger('fits_debug')->notice('update');
     if ($media->bundle() != 'fits_technical_metadata') {
         return;
     }
@@ -110,6 +111,13 @@ function islandora_fits_media_update(MediaInterface $media) {
     }
 }
 
+/**
+ * Implements hook_media_insert().
+ */
+function islandora_fits_media_insert(MediaInterface $media) {
+    \Drupal::logger('fits_debug')->notice('insert');
+    islandora_fits_media_update($media);
+}
 
 
 
