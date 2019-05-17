@@ -34,6 +34,10 @@ class XMLTransform extends ServiceProviderBase {
      * @return array
      */
     public function transformFits($input_xml) {
+        $utf8 = mb_detect_encoding($input_xml, 'UTF-8', true);
+        if (!$utf8) {
+            $input_xml = utf8_encode($input_xml);
+        }
         try {
             $xml = new \SimpleXMLElement($input_xml);
         } catch (\Exception $e) {
