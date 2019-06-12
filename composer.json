@@ -1,5 +1,5 @@
 {
-  "name": "drupal/islandora_fits",
+  "name": "roblib/islandora_fits",
   "type": "drupal-module",
   "description": "Enables Technical Metadata derivative generation.",
   "keywords": ["Drupal"],
