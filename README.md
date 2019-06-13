@@ -1,12 +1,12 @@
 # Islandora FITS
 Config module to make Islandora aware of FITS microservice
 
-##Installation
+## Installation
 #### Install this module
 Install and enable this module in the usual way
 
 
-####Install FITS Webservice
+#### Install FITS Webservice
 FITS xmls are generated from an easily installed web service.  
 Get the latest fits.zip and fits.war from https://projects.iq.harvard.edu/fits/downloads
 (on my box I had to install a missing zip library with ‘sudo apt-get install php7.1-zip’)
@@ -23,7 +23,7 @@ Restart Tomcat and test with
 `curl -k -F datafile="@/path/to/myfile.jpg" http://example.com:8080/fits/examine`
 (note: the ‘@’ is required.)
 
-####Installing Microservice 
+#### Installing Microservice 
 Get code from https://github.com/roblib/CrayFits and install.  This code can live anywhere, including an external server, 
 but most installations will have it at /var/www/html.
 
