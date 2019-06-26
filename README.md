@@ -36,5 +36,7 @@ Note: The location of the fits webserver is stored in the .env file in the root 
 #### Adding FITs requests to the queue
 Copy the file `assets/ca.islandora.alpaca.connector.ocr.blueprint.xml` to `/opt/karak/deploy` on your server.  There is no need to restart.
 
+
 #### Adding Checksum to Display
 A pseudo field with the computed checksum can be added to Repository Item display.  Naviage to `admin/structure/types/manage/islandora_object/display` to enable or disable display of `File Checksum`.  
+
