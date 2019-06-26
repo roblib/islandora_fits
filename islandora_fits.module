@@ -120,5 +120,56 @@ function islandora_fits_media_insert(MediaInterface $media) {
     islandora_fits_media_update($media);
 }
 
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function islandora_fits_entity_extra_field_info() {
+    $extra = [];
+    $extra['node']['islandora_object']['display']['islandora_fits_checksum'] = array(
+        'label' => t('File Checksum'),
+        'description' => t('Checksum as discovered by FITs webservice'),
+        'weight' => 100,
+        'visible' => TRUE,
+    );
+    return $extra;
+}
+
+/**
+ * Implements hook_entity_view().
+ */
+function islandora_fits_entity_view(array &$build, $entity, $display, $view_mode) {
+    $route_match_item = \Drupal::routeMatch()->getParameters()->all();
+    $current_entity = reset($route_match_item);
+    if ($entity === $current_entity) {
+        $medias = \Drupal::entityQuery(
+            'media')
+            ->condition('field_media_of', $entity->id())
+            ->condition('bundle', 'fits_technical_metadata')
+            ->execute();
+        $mid = \reset($medias);
+        if ($mid) {
+            $fits = Media::load($mid);
+            $checksum = $fits->get('fits_ois_file_information_md5che')->value;
+            if ($checksum) {
+                $build['islandora_fits_checksum'] = [
+                    '#type' => 'container',
+                    '#attributes' => [
+                        'id' => 'field-islandora-checksum',
+                    ],
+                    'checksum' => [
+                        '#type' => 'item',
+                        '#title' => t('MD5 Checksum'),
+                        'internal_uri' => [
+                            '#type' => 'markup',
+                            '#markup' => $checksum,
+                        ],
+                    ],
+                ];
+            }
+
+        }
+    }
+}
+
 
 
