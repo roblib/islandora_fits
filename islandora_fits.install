@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * @file
+ * Install/update hook implementations.
+ */
+
+
+
+use Drupal\taxonomy\Entity\Term;
+use Drupal\field\Entity\FieldConfig;
+
+/**
+ * Implements hook_install().
+ */
+function islandora_fits_install() {
+  $term_name = 'FITS File';
+  $test_terms = taxonomy_term_load_multiple_by_name($term_name);
+  if (!$test_terms) {
+    $term = Term::create([
+      'parent' => [],
+      'name' => $term_name,
+      'vid' => 'islandora_media_use',
+      'description' => 'Technical Metadata associated with an original media file',
+      'field_external_uri' => ['uri' => 'https://projects.iq.harvard.edu/fits'],
+    ])->save();
+  }
+  // Add xml extension if it doesn't already exist.
+  $field = FieldConfig::load("media.file.field_media_file");
+  $fieldSettings = $field->getSettings();
+  $extensions = $fieldSettings['file_extensions'];
+  if (!strpos($extensions, 'xml')) {
+    $fieldSettings['file_extensions'] .= ' xml';
+    $field->set('settings', $fieldSettings);
+  }
+}
