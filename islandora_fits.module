@@ -55,12 +55,12 @@ function islandora_fits_media_presave(MediaInterface $media) {
   $file = File::load($file_id);
   $data = file_get_contents($file->getFileUri());
   // Adds any new fields to FITS media type.
-  $has_new = $transformer->check_new($data);
+  $has_new = $transformer->checkNew($data);
   if ($has_new) {
     $media->set('field_complete', FALSE);
   }
   else {
-    $transformer->populate_media($data, $media);
+    $transformer->populateMedia($data, $media);
   }
 }
 
@@ -76,7 +76,7 @@ function islandora_fits_media_update(MediaInterface $media) {
     $file_id = $media->get('field_media_file')->getValue()[0]['target_id'];
     $file = File::load($file_id);
     $data = file_get_contents($file->getFileUri());
-    $transformer->add_media_fields($data);
+    $transformer->addMediaFields($data);
     $new_media = Media::load($media->id());
     $new_media->set('field_complete', TRUE);
     $new_media->save();

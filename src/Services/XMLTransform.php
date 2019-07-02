@@ -4,11 +4,13 @@ namespace Drupal\islandora_fits\Services;
 
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
+use Drupal\Core\Entity\EntityFieldManager;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\Entity\FieldConfig;
+use DrupalCodeGenerator\Command\Drupal_8\Form\Simple;
 
 /**
  * Class XMLTransform.
@@ -49,7 +51,7 @@ class XMLTransform extends ServiceProviderBase {
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger.
    */
-  public function __construct(RendererInterface $renderer, EntityManagerInterface $entityManager, MessengerInterface $messenger) {
+  public function __construct(RendererInterface $renderer, EntityFieldManager $entityManager, MessengerInterface $messenger) {
     $this->renderer = $renderer;
     $this->entityManager = $entityManager;
     $this->messenger = $messenger;
@@ -151,13 +153,13 @@ class XMLTransform extends ServiceProviderBase {
    *
    * Once it has these it passes them off recursively.
    *
-   * @param SimpleXMLElement $xml
+   * @param  \SimpleXMLElement
    *   The SimpleXMLElement to parse.
    *
    * @return array
    *   An array containing key/value pairs of fields and data.
    */
-  private function islandoraFitsChildXpath(SimpleXMLElement $xml) {
+  private function islandoraFitsChildXpath(\SimpleXMLElement $xml) {
     $results = $xml->xpath('/*|/*/fits:metadata');
     $output = [];
     foreach ($results as $result) {
@@ -173,12 +175,12 @@ class XMLTransform extends ServiceProviderBase {
    * we grab the node's text value and add to
    * the output array.
    *
-   * @param SimpleXMLElement $child
+   * @param \SimpleXMLElement $child
    *   The current child that we are searching through.
    * @param array $output
    *   An array containing key/value pairs of fields and data.
    */
-  private function islandoraFitsChildren(SimpleXMLElement $child, array &$output) {
+  private function islandoraFitsChildren(\SimpleXMLElement $child, array &$output) {
     $grandchildren = $child->xpath('*/*');
 
     if (count($grandchildren) > 0) {
