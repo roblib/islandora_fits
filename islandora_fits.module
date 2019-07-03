@@ -48,7 +48,6 @@ function islandora_fits_media_presave(MediaInterface $media) {
   if ($media->bundle() != 'fits_technical_metadata') {
     return;
   }
-
   $transformer = \Drupal::getContainer()->get('islandora_fits.transformxml');
   $media->set('field_complete', TRUE);
   $file_id = $media->get('field_media_file')->getValue()[0]['target_id'];
