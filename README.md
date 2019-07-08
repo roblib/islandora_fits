@@ -19,6 +19,7 @@ Edit the catalina.properties file on the Drupal server by adding the
 following two lines to the bottom of the file-
 
 fits.home=/<path-to-fits>/fits
+
 shared.loader=/<path-to-fits>/fits/lib/*.jar
 
 Restart Tomcat and test with 
