@@ -3,7 +3,8 @@ Config module to make Islandora aware of FITS microservice
 
 ## Installation
 #### Install this module
-Install and enable this module in the usual way
+Install and enable this module in the usual way.  On installation the module will 
+add a context causing the creation of A FITs media when an Original File media is ingested.
 
 
 #### Install FITS Webservice
@@ -39,6 +40,7 @@ port in Apache.
 Note: The location of the fits webserver is stored in the .env file in the 
 root dir of the Symfony app.  This will have to be reconfigured if the Fits 
 server is anywhere other than localhost:8080/fits
+
 
 #### Adding FITs requests to the queue
 Copy the file `assets/ca.islandora.alpaca.connector.ocr.blueprint.xml` 
