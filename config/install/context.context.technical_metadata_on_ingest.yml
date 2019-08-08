@@ -3,6 +3,9 @@ status: true
 dependencies:
   module:
     - islandora
+  enforced:
+    module:
+      - islandora_fits
 name: technical_metadata_on_ingest
 label: 'Technical Metadata on Ingest'
 group: Islandora

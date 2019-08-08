@@ -1,6 +1,9 @@
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  enforced:
+    module:
+      - islandora_fits
 id: fits_technical_metadata
 label: 'FITS Technical metadata'
 description: "Display of transformed FITS xml"

@@ -10,6 +10,9 @@ dependencies:
     - media.type.fits_technical_metadata
   module:
     - islandora_fits
+  enforced:
+    module:
+      - islandora_fits
 id: media.fits_technical_metadata.default
 targetEntityType: media
 bundle: fits_technical_metadata

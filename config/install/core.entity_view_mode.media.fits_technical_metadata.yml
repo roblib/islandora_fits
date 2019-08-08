@@ -3,6 +3,9 @@ status: true
 dependencies:
   module:
     - media
+  enforced:
+    module:
+      - islandora_fits
 id: media.fits_technical_metadata
 label: 'FITS Technical Metadata'
 targetEntityType: media
