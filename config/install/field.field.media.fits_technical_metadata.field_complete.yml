@@ -4,6 +4,9 @@ dependencies:
   config:
     - field.storage.media.field_complete
     - media.type.fits_technical_metadata
+  enforced:
+    module:
+      - islandora_fits
 id: media.fits_technical_metadata.field_complete
 field_name: field_complete
 entity_type: media
