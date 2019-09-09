@@ -32,5 +32,6 @@ function islandora_fits_install() {
   if (!strpos($extensions, 'xml')) {
     $fieldSettings['file_extensions'] .= ' xml';
     $field->set('settings', $fieldSettings);
+    $field->save();
   }
 }
