@@ -1,4 +1,3 @@
-
 <?php
 
 /**
@@ -97,13 +96,26 @@ function islandora_fits_media_insert(MediaInterface $media) {
  * Implements hook_entity_extra_field_info().
  */
 function islandora_fits_entity_extra_field_info() {
+  $entityFieldManager = \Drupal::service('entity_field.manager');
+  $node_types = \Drupal\node\Entity\NodeType::loadMultiple();
   $extra = [];
-  $extra['node']['islandora_object']['display']['islandora_fits_checksum'] = [
-    'label' => t('File Checksum'),
-    'description' => t('Checksum as discovered by FITs webservice'),
-    'weight' => 100,
-    'visible' => TRUE,
-  ];
+  $types = [];
+  foreach ($node_types as $node_type) {
+    $types[] = $node_type->get('type');
+  }
+
+  foreach ($types as $bundle) {
+    $fields = $entityFieldManager->getFieldDefinitions('node', $bundle);
+    if (array_key_exists('field_model', $fields) && array_key_exists('field_member_of', $fields)) {
+      $extra['node'][$bundle]['display']['islandora_fits_checksum'] = [
+        'label' => t('File Checksum'),
+        'description' => t('Checksum as discovered by FITs webservice'),
+        'weight' => 100,
+        'visible' => TRUE,
+      ];
+    }
+  }
+
   return $extra;
 }
 
