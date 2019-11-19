@@ -7,7 +7,7 @@ dependencies:
 id: media.fits_ois_file_information_md5che
 field_name: fits_ois_file_information_md5che
 entity_type: media
-type: text
+type: string
 settings:
   max_length: 255
 module: text
