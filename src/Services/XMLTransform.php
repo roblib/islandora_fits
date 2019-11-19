@@ -300,7 +300,7 @@ class XMLTransform extends ServiceProviderBase {
         $field_storage = FieldStorageConfig::create([
           'entity_type' => 'media',
           'field_name' => $field['field_name'],
-          'type' => 'text',
+          'type' => 'string',
         ]);
         $field_storage->save();
       }
