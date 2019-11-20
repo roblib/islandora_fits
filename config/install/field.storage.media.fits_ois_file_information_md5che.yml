@@ -3,7 +3,10 @@ status: true
 dependencies:
   module:
     - media
-    - text
+    - islandora_fits
+  enforced:
+    module:
+      - islandora_fits
 id: media.fits_ois_file_information_md5che
 field_name: fits_ois_file_information_md5che
 entity_type: media
