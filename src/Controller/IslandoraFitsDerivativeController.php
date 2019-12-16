@@ -63,8 +63,12 @@ class IslandoraFitsDerivativeController extends ControllerBase {
     if ($contents) {
       $media_type = $media->bundle();
       $has_new = $this->transformer->checkNew($contents, $media_type);
+      \Drupal::logger('alan_dev')->warning("Has new - $has_new");
       if ($has_new) {
+        $media->save();
         $this->transformer->addMediaFields($contents, $media_type);
+        \Drupal::logger('alan_dev')->warning("Media fields added");
+
         $media = Media::load($media->id());
       }
       $this->transformer->populateMedia($contents, $media);
@@ -72,6 +76,7 @@ class IslandoraFitsDerivativeController extends ControllerBase {
       $media->{$destination_field}->setValue([
         'target_id' => $file->id(),
       ]);
+
       $media->save();
     }
     return new Response("<h1>Complete</h1>");
