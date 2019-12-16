@@ -154,7 +154,7 @@ class XMLTransform extends ServiceProviderBase {
    *
    * Once it has these it passes them off recursively.
    *
-   * @param  \SimpleXMLElement
+   * @param \SimpleXMLElement
    *   The SimpleXMLElement to parse.
    *
    * @return array
@@ -280,13 +280,15 @@ class XMLTransform extends ServiceProviderBase {
    *
    * @param string $input_xml
    *   Input to be transformed.
-   *
-   * @throws \Drupal\Core\Entity\EntityStorageException
+   * @param string $media_type
+   *  Media Bundle
    *
    * @return bool
    *   Fields to be formatted.
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   *
    */
-  public function addMediaFields(string $input_xml) {
+  public function addMediaFields(string $input_xml, $media_type = 'fits_technical_metadata') {
     $fields_added = FALSE;
     $data = $this->transformFits($input_xml);
     $all_fields = [];
@@ -304,13 +306,13 @@ class XMLTransform extends ServiceProviderBase {
         ]);
         $field_storage->save();
       }
-      $bundle_fields = $this->entityManager->getFieldDefinitions('media', 'fits_technical_metadata');
+      $bundle_fields = $this->entityManager->getFieldDefinitions('media', $media_type);
       $bundle_keys = array_keys($bundle_fields);
       if (!in_array($field['field_name'], $bundle_keys)) {
         $field_storage = FieldStorageConfig::loadByName('media', $field['field_name']);
         FieldConfig::create([
           'field_storage' => $field_storage,
-          'bundle' => 'fits_technical_metadata',
+          'bundle' => $media_type,
           'label' => $field['field_label'],
         ])->save();
         $fields_added = TRUE;
@@ -395,11 +397,13 @@ class XMLTransform extends ServiceProviderBase {
    *
    * @param string $input_xml
    *   Xml to be checked.
+   * @param string $media_type
+   *  Media Bundle
    *
    * @return bool
    *   Whether fields havbe been added.
    */
-  public function checkNew(string $input_xml) {
+  public function checkNew(string $input_xml, $media_type = 'fits_technical_metadata') {
     $fields_added = FALSE;
     $data = $this->transformFits($input_xml);
     $all_fields = [];
@@ -408,7 +412,7 @@ class XMLTransform extends ServiceProviderBase {
     }
     $to_process = $this->normalizeNames($all_fields);
     foreach ($to_process as $field) {
-      $bundle_fields = $this->entityManager->getFieldDefinitions('media', 'fits_technical_metadata');
+      $bundle_fields = $this->entityManager->getFieldDefinitions('media', $media_type);
       $bundle_keys = array_keys($bundle_fields);
       if (!in_array($field['field_name'], $bundle_keys)) {
         $fields_added = TRUE;

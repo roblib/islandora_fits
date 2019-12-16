@@ -86,10 +86,10 @@ function islandora_fits_media_update(MediaInterface $media) {
  * Implements hook_media_insert().
  */
 function islandora_fits_media_insert(MediaInterface $media) {
-  if ($media->bundle() != 'fits_technical_metadata') {
-    return;
+  if ($media->bundle() == 'fits_technical_metadata') {
+    islandora_fits_media_update($media);
   }
-  islandora_fits_media_update($media);
+
 }
 
 /**

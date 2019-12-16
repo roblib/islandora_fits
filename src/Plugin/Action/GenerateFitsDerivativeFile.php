@@ -6,6 +6,7 @@ namespace Drupal\islandora_fits\Plugin\Action;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Drupal\islandora\Plugin\Action\AbstractGenerateDerivativeMediaFile;
 
 /**
@@ -24,7 +25,7 @@ class GenerateFitsDerivativeFile extends AbstractGenerateDerivativeMediaFile {
    */
   public function defaultConfiguration() {
     $config = parent::defaultConfiguration();
-    $config['path'] = '[date:custom:Y]-[date:custom:m]/[node:nid]-[term:name].xml';
+    $config['path'] = '[date:custom:Y]-[date:custom:m]/[media:mid]-TECHMD.xml';
     $config['mimetype'] = 'application/xml';
     $config['queue'] = 'islandora-connector-fits';
     $config['destination_media_type'] = 'file';
@@ -64,6 +65,14 @@ class GenerateFitsDerivativeFile extends AbstractGenerateDerivativeMediaFile {
    */
   protected function generateData(EntityInterface $entity) {
     $data = parent::generateData($entity);
+    $route_params = [
+      'media' => $entity->id(),
+      'destination_field' => $this->configuration['destination_field_name'],
+    ];
+    $data['destination_uri'] = Url::fromRoute('islandora_fits.attach_file_to_media', $route_params)
+      ->setAbsolute()
+      ->toString();
+
     return $data;
   }
 }

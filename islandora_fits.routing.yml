@@ -1,0 +1,21 @@
+islandora_fits.admin_form:
+  path: '/admin/config/islandora/islandora_fits'
+  defaults:
+    _form: '\Drupal\islandora_fits\Form\AdminForm'
+    _title: 'AdminForm'
+  requirements:
+    _access: 'TRUE'
+
+islandora_fits.attach_file_to_media:
+  path: '/media/add_fits/{media}/{destination_field}'
+  defaults:
+    _controller: '\Drupal\islandora_fits\Controller\IslandoraFitsDerivativeController::attachToMedia'
+  methods: [GET, PUT]
+  requirements:
+    _custom_access: '\Drupal\islandora\Controller\MediaSourceController::attachToMediaAccess'
+  options:
+    _auth: ['basic_auth', 'cookie', 'jwt_auth']
+    no_cache: 'TRUE'
+    parameters:
+      media:
+        type: entity:media
