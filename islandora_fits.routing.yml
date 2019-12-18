@@ -1,11 +1,3 @@
-islandora_fits.admin_form:
-  path: '/admin/config/islandora/islandora_fits'
-  defaults:
-    _form: '\Drupal\islandora_fits\Form\AdminForm'
-    _title: 'AdminForm'
-  requirements:
-    _access: 'TRUE'
-
 islandora_fits.attach_file_to_media:
   path: '/media/add_fits/{media}/{destination_field}'
   defaults:

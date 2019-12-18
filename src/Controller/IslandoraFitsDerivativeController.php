@@ -2,14 +2,17 @@
 
 namespace Drupal\islandora_fits\Controller;
 
-
 use Drupal\Core\Controller\ControllerBase;
 
 use Drupal\media\Entity\Media;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Drupal\islandora_fits\Services\XMLTransform;
 
+/**
+ * Adds Derivative Media to existing media.
+ */
 class IslandoraFitsDerivativeController extends ControllerBase {
 
   /**
@@ -19,7 +22,13 @@ class IslandoraFitsDerivativeController extends ControllerBase {
    */
   protected $transformer;
 
-  public function __construct($transformer) {
+  /**
+   * IslandoraFitsDerivativeController constructor.
+   *
+   * @param \Drupal\islandora_fits\Services\XMLTransform $transformer
+   *   XMLTransformer.
+   */
+  public function __construct(XMLTransform $transformer) {
     $this->transformer = $transformer;
   }
 
@@ -39,10 +48,10 @@ class IslandoraFitsDerivativeController extends ControllerBase {
   }
 
   /**
-   *  Adds file to existing media.
+   * Adds file to existing media.
    *
-   * @param Media $media
-   *  The media to which file is added
+   * @param Drupal\media\Entity\Media $media
+   *   The media to which file is added.
    * @param string $destination_field
    *   The name of the media field to add file reference.
    * @param \Symfony\Component\HttpFoundation\Request $request
@@ -61,22 +70,28 @@ class IslandoraFitsDerivativeController extends ControllerBase {
     $content_location = $request->headers->get('Content-Location', "");
     $contents = $request->getContent();
     if ($contents) {
-      $media_type = $media->bundle();
-      $has_new = $this->transformer->checkNew($contents, $media_type);
-      \Drupal::logger('alan_dev')->warning("Has new - $has_new");
+      $has_new = $this->transformer->checkNew($contents, "fits_technical_metadata");
       if ($has_new) {
-        $media->save();
-        $this->transformer->addMediaFields($contents, $media_type);
-        \Drupal::logger('alan_dev')->warning("Media fields added");
-
-        $media = Media::load($media->id());
+        $this->transformer->addMediaFields($contents, "fits_technical_metadata");
       }
-      $this->transformer->populateMedia($contents, $media);
+      $fits_media_description = $media->get($destination_field);
+      $target_id = $fits_media_description->getValue($destination_field)[0]['target_id'];
+      if (!$target_id) {
+        $fits_media = MEDIA::create([
+          'bundle' => 'fits_technical_metadata',
+          'name' => "Fits Metadata of - {$media->id()}",
+        ]);
+      }
+      else {
+        $fits_media = Media::load($target_id);
+      }
+      $this->transformer->populateMedia($contents, $fits_media);
       $file = file_save_data($contents, $content_location, FILE_EXISTS_REPLACE);
-      $media->{$destination_field}->setValue([
+      $fits_media->{'field_media_file'}->setValue([
         'target_id' => $file->id(),
       ]);
-
+      $fits_media->save();
+      $media->set($destination_field, $fits_media);
       $media->save();
     }
     return new Response("<h1>Complete</h1>");

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Drupal\islandora_fits\Plugin\Action;
-
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -41,6 +39,18 @@ class GenerateFitsDerivativeFile extends AbstractGenerateDerivativeMediaFile {
     $form['mimetype']['#description'] = t('Mimetype to convert to (e.g. application/xml, etc...)');
     $form['mimetype']['#value'] = 'application/xml';
     $form['mimetype']['#type'] = 'hidden';
+    $map = $this->entityFieldManager->getFieldMapByFieldType('entity_reference');
+    $file_fields = $map['media'];
+    $file_options = array_combine(array_keys($file_fields), array_keys($file_fields));
+    $file_options = array_merge(['' => ''], $file_options);
+    $form['destination_field_name'] = [
+      '#required' => TRUE,
+      '#type' => 'select',
+      '#options' => $file_options,
+      '#title' => $this->t('Destination File field Name'),
+      '#default_value' => $this->configuration['destination_field_name'],
+      '#description' => $this->t('File field on Media Type to hold generated FITS media.  Cannot be the same as source'),
+    ];
 
     unset($form['args']);
     return $form;
@@ -75,4 +85,5 @@ class GenerateFitsDerivativeFile extends AbstractGenerateDerivativeMediaFile {
 
     return $data;
   }
+
 }

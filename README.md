@@ -5,13 +5,16 @@ Config module to make Islandora aware of FITS microservice
 
 ## Installation
 #### Install this module
-Install and enable this module in the usual way.  On installation the module will 
-add a context causing the creation of A FITs media when an Original File media is ingested.
+Install and enable this module in the usual way.  
+On installation the module will 
+add a context causing the creation of A FITs media when 
+an Original File media is ingested.
 
 
 #### Install FITS Webservice
 FITS xmls are generated from an easily installed web service.  
-Get the latest fits.zip and fits.war from https://projects.iq.harvard.edu/fits/downloads
+Get the latest fits.zip and fits.war from 
+https://projects.iq.harvard.edu/fits/downloads
 (on my box I had to install a missing zip library with 
 ‘sudo apt-get install php7.1-zip’)
 

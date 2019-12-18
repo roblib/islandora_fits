@@ -9,6 +9,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\media\MediaInterface;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
+use Drupal\node\Entity\NodeType;
 
 /**
  * Implements hook_help().
@@ -51,16 +52,19 @@ function islandora_fits_media_presave(MediaInterface $media) {
   $transformer = \Drupal::getContainer()->get('islandora_fits.transformxml');
   $media->set('field_complete', TRUE);
   $file_id = $media->get('field_media_file')->getValue()[0]['target_id'];
-  $file = File::load($file_id);
-  $data = file_get_contents($file->getFileUri());
-  // Adds any new fields to FITS media type.
-  $has_new = $transformer->checkNew($data);
-  if ($has_new) {
-    $media->set('field_complete', FALSE);
+  if ($file_id) {
+    $file = File::load($file_id);
+    $data = file_get_contents($file->getFileUri());
+    // Adds any new fields to FITS media type.
+    $has_new = $transformer->checkNew($data);
+    if ($has_new) {
+      $media->set('field_complete', FALSE);
+    }
+    else {
+      $transformer->populateMedia($data, $media);
+    }
   }
-  else {
-    $transformer->populateMedia($data, $media);
-  }
+
 }
 
 /**
@@ -97,7 +101,7 @@ function islandora_fits_media_insert(MediaInterface $media) {
  */
 function islandora_fits_entity_extra_field_info() {
   $entityFieldManager = \Drupal::service('entity_field.manager');
-  $node_types = \Drupal\node\Entity\NodeType::loadMultiple();
+  $node_types = NodeType::loadMultiple();
   $extra = [];
   $types = [];
   foreach ($node_types as $node_type) {

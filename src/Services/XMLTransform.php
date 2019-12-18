@@ -5,13 +5,11 @@ namespace Drupal\islandora_fits\Services;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
 use Drupal\Core\Entity\EntityFieldManager;
-use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\media\MediaInterface;
-use DrupalCodeGenerator\Command\Drupal_8\Form\Simple;
 
 /**
  * Class XMLTransform.

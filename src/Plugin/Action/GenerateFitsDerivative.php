@@ -2,19 +2,8 @@
 
 namespace Drupal\islandora_fits\Plugin\Action;
 
-use Drupal\Core\Entity\EntityFieldManagerInterface;
-use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\islandora\EventGenerator\EventGeneratorInterface;
-use Drupal\islandora\IslandoraUtils;
-use Drupal\islandora\MediaSource\MediaSourceService;
 use Drupal\islandora\Plugin\Action\AbstractGenerateDerivative;
-use Drupal\islandora\Plugin\Action\AbstractGenerateDerivativeMediaFile;
-use Drupal\jwt\Authentication\Provider\JwtAuth;
-use Drupal\token\Token;
-use Stomp\StatefulStomp;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Emits a Node for generating fits derivatives event.
@@ -87,7 +76,7 @@ class GenerateFitsDerivative extends AbstractGenerateDerivative {
     $form['mimetype']['#value'] = 'application/xml';
     $form['mimetype']['#type'] = 'hidden';
     $default_term = $this->utils->getTermForUri($this->configuration['derivative_term_uri']);
-    if(!$default_term) {
+    if (!$default_term) {
       $default_term = $this->utils->getTermForUri($uri);
     }
     $form['source_term']['#default_value'] = $default_term;
@@ -105,7 +94,7 @@ class GenerateFitsDerivative extends AbstractGenerateDerivative {
     ];
 
     $altered = ['derivative_term', 'destination_media_type', 'scheme'];
-    foreach($altered as $element) {
+    foreach ($altered as $element) {
       $form[$element]["#required"] = FALSE;
       $form[$element]['#states'] = $states;
     }

@@ -1,5 +1,0 @@
-islandora_fits.admin_form:
-  title: 'FITS Configuration'
-  parent: system.admin_config_islandora
-  description: 'Customize FITS behavior.'
-  route_name: islandora_fits.admin_form
