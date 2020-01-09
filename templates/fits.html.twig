@@ -1,10 +1,8 @@
 {{ attach_library('css/islandora_fits') }}
 
 <div>
-    <details data-drupal-selector="edit-advanced" aria-describedby="edit-advanced--description" id="edit-advanced"
-             class="js-form-wrapper form-wrapper seven-details">
-        <summary>Fits Metadata</summary>
-        <h1>{{ title }}</h1>
+    <details >
+        <summary class="islandora_fits_summary">Fits Metadata</summary>
         <p>{{ link }}</p>
         {% for entry in output %}
             <h2> {{ entry.title }} </h2>

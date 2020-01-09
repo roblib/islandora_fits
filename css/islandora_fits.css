@@ -9,3 +9,8 @@
 .islandora_fits_table_values {
   width: 50%;
 }
+
+.islandora_fits_summary {
+  font-size: larger;
+  font-weight: bold;
+}
