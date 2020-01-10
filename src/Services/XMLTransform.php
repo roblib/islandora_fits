@@ -32,7 +32,7 @@ class XMLTransform extends ServiceProviderBase {
    *
    * @var array
    */
-  private $forbidden;
+  public $forbidden;
   /**
    * The messenger.
    *
@@ -45,7 +45,7 @@ class XMLTransform extends ServiceProviderBase {
    *
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entityManager
+   * @param \Drupal\Core\Entity\EntityFieldManager $entityManager
    *   The entity manager.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger.
@@ -152,7 +152,7 @@ class XMLTransform extends ServiceProviderBase {
    *
    * Once it has these it passes them off recursively.
    *
-   * @param \SimpleXMLElement
+   * @param \SimpleXMLElement $xml
    *   The SimpleXMLElement to parse.
    *
    * @return array
@@ -279,12 +279,12 @@ class XMLTransform extends ServiceProviderBase {
    * @param string $input_xml
    *   Input to be transformed.
    * @param string $media_type
-   *  Media Bundle
+   *   Media Bundle.
    *
    * @return bool
    *   Fields to be formatted.
-   * @throws \Drupal\Core\Entity\EntityStorageException
    *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function addMediaFields(string $input_xml, $media_type = 'fits_technical_metadata') {
     $fields_added = FALSE;
@@ -354,12 +354,31 @@ class XMLTransform extends ServiceProviderBase {
    * @return array
    *   Fields prepped for display.
    */
-  private function harvestValues(array $input) {
+  public function harvestValues(array $input) {
     $fields = [];
     $label = str_replace(' ', '_', $input['title']);
     $rows = $input['data']['#rows'];
     foreach ($rows as $key => $value) {
       $fields["{$label}_{$key}"] = $value['value']['data'];
+    }
+    return $fields;
+
+  }
+
+  /**
+   * Extracts and labels content.
+   *
+   * @param array $input
+   *   Values to be harvested and prepped.
+   *
+   * @return array
+   *   Fields prepped for display.
+   */
+  public function harvestKeyValues(array $input) {
+    $fields = [];
+    $rows = $input['data']['#rows'];
+    foreach ($rows as $key => $value) {
+      $fields["{$input['title']} $key"] = "{$value['value']['data']}";
     }
     return $fields;
 
@@ -396,7 +415,7 @@ class XMLTransform extends ServiceProviderBase {
    * @param string $input_xml
    *   Xml to be checked.
    * @param string $media_type
-   *  Media Bundle
+   *   Media Bundle.
    *
    * @return bool
    *   Whether fields havbe been added.

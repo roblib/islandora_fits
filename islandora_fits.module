@@ -47,21 +47,50 @@ function islandora_fits_theme($existing, $type, $theme, $path) {
  */
 function islandora_fits_media_presave(MediaInterface $media) {
   if ($media->bundle() != 'fits_technical_metadata') {
-    return;
-  }
-  $transformer = \Drupal::getContainer()->get('islandora_fits.transformxml');
-  $media->set('field_complete', TRUE);
-  $file_id = $media->get('field_media_file')->getValue()[0]['target_id'];
-  if ($file_id) {
-    $file = File::load($file_id);
-    $data = file_get_contents($file->getFileUri());
-    // Adds any new fields to FITS media type.
-    $has_new = $transformer->checkNew($data);
-    if ($has_new) {
-      $media->set('field_complete', FALSE);
+    $field_names = array_keys($media->getFieldDefinitions());
+    $pairs = [];
+    foreach ($field_names as $name) {
+      $label = $media->$name->getFieldDefinition()->getLabel();
+      if (is_string($label)) {
+        // Allow for accidental multiple spaves.
+        $label = preg_replace('/\s+/', ' ', $label);
+        $pairs[$label] = $name;
+      }
     }
-    else {
-      $transformer->populateMedia($data, $media);
+    $transformer = \Drupal::getContainer()->get('islandora_fits.transformxml');
+    $file_id = $media->get('field_fits_file')->getValue()[0]['target_id'];
+    if (!$file_id) {
+      return;
+    }
+    $file = File::load($file_id);
+    $contents = file_get_contents($file->getFileUri());
+    $data = $transformer->transformFits($contents);
+    $all_fields = [];
+    foreach ($data['#output'] as $datum) {
+      $all_fields = array_merge($all_fields, $transformer->harvestKeyValues($datum));
+    }
+    $indexable_fields = array_intersect_key($pairs, $all_fields);
+    foreach ($indexable_fields as $key => $field) {
+      if ($media->get($field)->getString() != $all_fields[$key]) {
+        $media->set($field, $all_fields[$key]);
+      }
+    }
+  }
+  else {
+    $transformer = \Drupal::getContainer()->get('islandora_fits.transformxml');
+    $media->set('field_complete', TRUE);
+    $file_id = $media->get('field_media_file')->getValue()[0]['target_id'];
+    if ($file_id) {
+      $file = File::load($file_id);
+      $data = file_get_contents($file->getFileUri());
+      // Adds any new fields to FITS media type.
+      $has_new = $transformer->checkNew($data);
+      if ($has_new) {
+        $media->set('field_complete', FALSE);
+      }
+      else {
+        $transformer->populateMedia($data, $media);
+      }
     }
   }
 
@@ -93,7 +122,6 @@ function islandora_fits_media_insert(MediaInterface $media) {
   if ($media->bundle() == 'fits_technical_metadata') {
     islandora_fits_media_update($media);
   }
-
 }
 
 /**
@@ -119,7 +147,6 @@ function islandora_fits_entity_extra_field_info() {
       ];
     }
   }
-
   return $extra;
 }
 

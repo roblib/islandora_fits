@@ -29,11 +29,13 @@ shared.loader=/\<path-to-fits>/fits/lib/*.jar
 
 Restart Tomcat and test with 
 
-`curl -k -F datafile="@/path/to/myfile.jpg" http://example.com:8080/fits/examine`
+`curl -k -F datafile="@/path/to/myfile.jpg" 
+http://example.com:8080/fits/examine`
 (note: the ‘@’ is required.)
 
 #### Installing Microservice 
-Get code from https://github.com/roblib/CrayFits and install.  This code can live anywhere, including an external server, 
+Get code from https://github.com/roblib/CrayFits and install.  
+This code can live anywhere, including an external server, 
 but most installations will have it at /var/www/html.
 
 The App runs by entering php bin/console server:start *:8050 in the App 
@@ -57,3 +59,14 @@ to `/opt/karak/deploy` on your server.  There is no need to restart.
 A pseudo field with the computed checksum can be added to Repository Item 
 display.  Navigate to `admin/structure/types/manage/islandora_object/display` 
 to enable or disable display of `File Checksum`.  
+
+#### Adding Indexed fields to Media Types 
+Any media fit a field_fits_file file field can have indexable fields added
+automatically on ingest.  Add fields to the Media Type with the naming 
+convention of `FITS_Group FITS_Label` ie `JHove Has Annotations`, 
+or `Exiftool Creating Application Name`. These fields will be autopopulated 
+when the FITS microservice adds the file to the media.  The values from these 
+fields may be used for Solr indexing or Media display.
+
+This is to be used primarily with the Islandora RDM Multifile Media module -
+https://github.com/roblib/islandora_rdm_multifile_media
