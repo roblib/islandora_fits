@@ -100,7 +100,9 @@ class XMLTransform extends ServiceProviderBase {
       ];
     }
     else {
-      $fits_metadata['Droid'] = ['PUID' => $puid];
+      if ($xml->identification->identity->externalIdentifier['type'] == 'puid') {
+        $fits_metadata['Droid'] = ['PUID' => $puid];
+      }
       foreach ($fits_metadata as $tool_name => $vals_array) {
         $variables['islandora_fits_data'][$tool_name] = [];
         $rows = &$variables['islandora_fits_data'][$tool_name];
