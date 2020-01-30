@@ -27,11 +27,13 @@ function islandora_fits_install() {
   }
   // Add xml extension if it doesn't already exist.
   $field = FieldConfig::load("media.file.field_media_file");
-  $fieldSettings = $field->getSettings();
-  $extensions = $fieldSettings['file_extensions'];
-  if (!strpos($extensions, 'xml')) {
-    $fieldSettings['file_extensions'] .= ' xml';
-    $field->set('settings', $fieldSettings);
-    $field->save();
+  if ($field) {
+    $fieldSettings = $field->getSettings();
+    $extensions = $fieldSettings['file_extensions'];
+    if (!strpos($extensions, 'xml')) {
+      $fieldSettings['file_extensions'] .= ' xml';
+      $field->set('settings', $fieldSettings);
+      $field->save();
+    }
   }
 }
