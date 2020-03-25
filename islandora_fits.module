@@ -57,8 +57,11 @@ function islandora_fits_media_presave(MediaInterface $media) {
         $pairs[$label] = $name;
       }
     }
+    $file_id = NULL;
     $transformer = \Drupal::getContainer()->get('islandora_fits.transformxml');
-    $file_id = $media->get('field_fits_file')->getValue()[0]['target_id'];
+    if($media->hasField('field_fits_file')) {
+      $file_id = $media->get('field_fits_file')->getValue()[0]['target_id'];
+    }
     if (!$file_id) {
       return;
     }
