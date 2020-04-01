@@ -47,37 +47,7 @@ function islandora_fits_theme($existing, $type, $theme, $path) {
  */
 function islandora_fits_media_presave(MediaInterface $media) {
   if ($media->bundle() != 'fits_technical_metadata') {
-    $field_names = array_keys($media->getFieldDefinitions());
-    $pairs = [];
-    foreach ($field_names as $name) {
-      $label = $media->$name->getFieldDefinition()->getLabel();
-      if (is_string($label)) {
-        // Allow for accidental multiple spaves.
-        $label = preg_replace('/\s+/', ' ', $label);
-        $pairs[$label] = $name;
-      }
-    }
-    $file_id = NULL;
-    $transformer = \Drupal::getContainer()->get('islandora_fits.transformxml');
-    if($media->hasField('field_fits_file')) {
-      $file_id = $media->get('field_fits_file')->getValue()[0]['target_id'];
-    }
-    if (!$file_id) {
-      return;
-    }
-    $file = File::load($file_id);
-    $contents = file_get_contents($file->getFileUri());
-    $data = $transformer->transformFits($contents);
-    $all_fields = [];
-    foreach ($data['#output'] as $datum) {
-      $all_fields = array_merge($all_fields, $transformer->harvestKeyValues($datum));
-    }
-    $indexable_fields = array_intersect_key($pairs, $all_fields);
-    foreach ($indexable_fields as $key => $field) {
-      if ($media->get($field)->getString() != $all_fields[$key]) {
-        $media->set($field, $all_fields[$key]);
-      }
-    }
+    return;
   }
   else {
     $transformer = \Drupal::getContainer()->get('islandora_fits.transformxml');
