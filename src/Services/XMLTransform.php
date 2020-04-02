@@ -317,12 +317,15 @@ class XMLTransform extends ServiceProviderBase {
       $bundle_keys = array_keys($bundle_fields);
       if (!in_array($field['field_name'], $bundle_keys)) {
         $field_storage = FieldStorageConfig::loadByName('media', $field['field_name']);
-        FieldConfig::create([
-          'field_storage' => $field_storage,
-          'bundle' => 'fits_technical_metadata',
-          'label' => $field['field_label'],
-        ])->save();
-        $fields_added = TRUE;
+        $field_entity = FieldConfig::load('media.fits_technical_metadata.' . $field['field_name']);
+        if (!$field_entity) {
+          FieldConfig::create([
+            'field_storage' => $field_storage,
+            'bundle' => 'fits_technical_metadata',
+            'label' => $field['field_label'],
+          ])->save();
+          $fields_added = TRUE;
+        }
       }
     }
     return $fields_added;
