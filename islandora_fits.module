@@ -60,7 +60,6 @@ function islandora_fits_media_presave(MediaInterface $media) {
       $has_new = $transformer->checkNew($data);
       if ($has_new) {
         $media->set('field_complete', FALSE);
-        $transformer->addMediaFields($data);
       }
       else {
         $transformer->populateMedia($data, $media);
