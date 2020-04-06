@@ -50,18 +50,22 @@ function islandora_fits_media_presave(MediaInterface $media) {
     return;
   }
   else {
+	  \Drupal::logger('islandora_fits')->debug("== In Presave ==");
     $transformer = \Drupal::getContainer()->get('islandora_fits.transformxml');
     $media->set('field_complete', TRUE);
     $file_id = $media->get('field_media_file')->getValue()[0]['target_id'];
     if ($file_id) {
+	  \Drupal::logger('islandora_fits')->debug("== Found File ==");
       $file = File::load($file_id);
       $data = file_get_contents($file->getFileUri());
+	  \Drupal::logger('islandora_fits')->debug("== Data ==\n@data", ['@data' => $data]);
       // Adds any new fields to FITS media type.
       $has_new = $transformer->checkNew($data);
       if ($has_new) {
         $media->set('field_complete', FALSE);
       }
       else {
+	  \Drupal::logger('islandora_fits')->debug("== Populating Media ==");
         $transformer->populateMedia($data, $media);
       }
     }
@@ -77,14 +81,20 @@ function islandora_fits_media_update(MediaInterface $media) {
     return;
   }
   if ($media->get('field_complete')->value == FALSE) {
+	  \Drupal::logger('islandora_fits')->debug("== In Update ==");
     $transformer = \Drupal::getContainer()->get('islandora_fits.transformxml');
     $file_id = $media->get('field_media_file')->getValue()[0]['target_id'];
     $file = File::load($file_id);
+	  \Drupal::logger('islandora_fits')->debug("== Found File ==");
     $data = file_get_contents($file->getFileUri());
+	  \Drupal::logger('islandora_fits')->debug("== Data ==\n@data", ['@data' => $data]);
+	  \Drupal::logger('islandora_fits')->debug("== Adding Fields ==");
     $transformer->addMediaFields($data);
     $new_media = Media::load($media->id());
+	  \Drupal::logger('islandora_fits')->debug("== Loading Media @mid ==", ['@mid' => $media->id()]);
     $new_media->set('field_complete', TRUE);
     $new_media->save();
+	  \Drupal::logger('islandora_fits')->debug("== Saved ==");
   }
 }
 
@@ -93,6 +103,7 @@ function islandora_fits_media_update(MediaInterface $media) {
  */
 function islandora_fits_media_insert(MediaInterface $media) {
   if ($media->bundle() == 'fits_technical_metadata') {
+	  \Drupal::logger('islandora_fits')->debug("== In Insert First ==");
     islandora_fits_media_update($media);
   }
 }

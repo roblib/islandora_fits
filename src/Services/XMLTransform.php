@@ -303,9 +303,12 @@ class XMLTransform extends ServiceProviderBase {
       $all_fields = array_merge($all_fields, $this->harvestValues($datum));
     }
     $to_process = $this->normalizeNames($all_fields);
+	  \Drupal::logger('islandora_fits')->debug("== Fields to Process ==\n@data", ['@data' => json_encode($to_process)]);
     foreach ($to_process as $field) {
+	  \Drupal::logger('islandora_fits')->debug("== Processing @data", ['@data' => $field['field_name']]);
       $exists = FieldStorageConfig::loadByName('media', $field['field_name']);
       if (!$exists) {
+	  \Drupal::logger('islandora_fits')->debug("== Creating Field Storage @field ==", ['@field' => $field['field_name']]);
         $field_storage = FieldStorageConfig::create([
           'entity_type' => 'media',
           'field_name' => $field['field_name'],
@@ -319,6 +322,7 @@ class XMLTransform extends ServiceProviderBase {
         $field_storage = FieldStorageConfig::loadByName('media', $field['field_name']);
         $field_entity = FieldConfig::load('media.fits_technical_metadata.' . $field['field_name']);
         if (!$field_entity) {
+	  \Drupal::logger('islandora_fits')->debug("== Creating Field Definition @field ==", ['@field' => $field['field_label']]);
           FieldConfig::create([
             'field_storage' => $field_storage,
             'bundle' => 'fits_technical_metadata',
