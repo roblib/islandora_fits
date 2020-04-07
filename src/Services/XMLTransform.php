@@ -356,7 +356,9 @@ class XMLTransform extends ServiceProviderBase {
       $field_name = substr("fits_$normalized", 0, 32);
       $to_add[$field_name] = $field_value;
     }
+	  \Drupal::logger('islandora_fits')->debug("== Fields to Set ==\n@data", ['@data' => json_encode($to_add)]);
     foreach ($to_add as $field_name => $field_value) {
+	  \Drupal::logger('islandora_fits')->debug("== Setting @data ==", ['@data' => $field_name]);
       $media->set($field_name, $field_value);
     }
   }

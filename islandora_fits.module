@@ -43,9 +43,9 @@ function islandora_fits_theme($existing, $type, $theme, $path) {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_presave().
+ * Implements hook_ENTITY_TYPE_update().
  */
-function islandora_fits_media_presave(MediaInterface $media) {
+function islandora_fits_media_update(MediaInterface $media) {
   if ($media->bundle() != 'fits_technical_metadata') {
     return;
   }
@@ -62,40 +62,13 @@ function islandora_fits_media_presave(MediaInterface $media) {
       // Adds any new fields to FITS media type.
       $has_new = $transformer->checkNew($data);
       if ($has_new) {
-        $media->set('field_complete', FALSE);
+        $transformer->addMediaFields($data);
       }
-      else {
 	  \Drupal::logger('islandora_fits')->debug("== Populating Media ==");
-        $transformer->populateMedia($data, $media);
-      }
+      $transformer->populateMedia($data, $media);
     }
   }
 
-}
-
-/**
- * Implements hook_media_update().
- */
-function islandora_fits_media_update(MediaInterface $media) {
-  if ($media->bundle() != 'fits_technical_metadata') {
-    return;
-  }
-  if ($media->get('field_complete')->value == FALSE) {
-	  \Drupal::logger('islandora_fits')->debug("== In Update ==");
-    $transformer = \Drupal::getContainer()->get('islandora_fits.transformxml');
-    $file_id = $media->get('field_media_file')->getValue()[0]['target_id'];
-    $file = File::load($file_id);
-	  \Drupal::logger('islandora_fits')->debug("== Found File ==");
-    $data = file_get_contents($file->getFileUri());
-	  \Drupal::logger('islandora_fits')->debug("== Data ==\n@data", ['@data' => $data]);
-	  \Drupal::logger('islandora_fits')->debug("== Adding Fields ==");
-    $transformer->addMediaFields($data);
-    $new_media = Media::load($media->id());
-	  \Drupal::logger('islandora_fits')->debug("== Loading Media @mid ==", ['@mid' => $media->id()]);
-    $new_media->set('field_complete', TRUE);
-    $new_media->save();
-	  \Drupal::logger('islandora_fits')->debug("== Saved ==");
-  }
 }
 
 /**
