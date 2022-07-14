@@ -7,9 +7,6 @@ dependencies:
   enforced:
     module:
       - islandora_fits
-third_party_settings:
-  field_permissions:
-    permission_type: public
 id: media.field_complete
 field_name: field_complete
 entity_type: media

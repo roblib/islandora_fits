@@ -5,7 +5,7 @@
   "keywords": [
     "Drupal"
   ],
-  "license": "GPL-2.0+",
+  "license": "GPL-2.0-or-later",
   "homepage": "https://www.drupal.org/project/islandora_fits",
   "minimum-stability": "dev",
   "support": {
@@ -13,7 +13,6 @@
     "source": "http://cgit.drupalcode.org/islandora_fits"
   },
   "require": {
-    "ext-SimpleXML": "*",
-    "drupal/field_permissions": "^1.1"
+    "ext-SimpleXML": "*"
   }
 }
