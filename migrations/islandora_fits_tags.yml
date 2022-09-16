@@ -5,7 +5,7 @@ migration_tags:
 migration_group: islandora
 label: "FITS Term(s)"
 source:
-  plugin: embeddedd_data
+  plugin: embedded_data
   data_rows:
     - vid: islandora_media_use
       name: FITS File
