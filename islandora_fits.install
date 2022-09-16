@@ -45,7 +45,7 @@ function islandora_fits_requirements($phase) : array {
     $term_exists = _islandora_fits_term_exists();
     $requirements['islandora_fits_term_exists'] = [
       'title' => t('FITS Term Exists'),
-      'value' => $term_exists,
+      'value' => $term_exists ? t('Exists') : t('Does not exist'),
       'description' => t('Whether or not a term with the URI targeted by default FITS derivative configuration exists. If derivative configurations were made to target another URI, this can probably be ignored.'),
       'severity' => $term_exists ? REQUIREMENT_OK : REQUIREMENT_WARNING
     ];
