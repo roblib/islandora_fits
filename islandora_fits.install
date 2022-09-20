@@ -64,6 +64,13 @@ function islandora_fits_requirements($phase) : array {
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
 function _islandora_fits_term_exists() {
+  $table_exists = \Drupal::database()->schema()->tableExists('taxonomy_term__field_external_uri');
+  if (!$table_exists) {
+    // XXX: If the table does not exist, then avoid attempting to make a query
+    // making use of the non-existent table.
+    return FALSE;
+  }
+
   $query = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->getQuery()
     ->condition('vid', 'islandora_media_use')
     ->condition('field_external_uri.uri', 'https://projects.iq.harvard.edu/fits')
