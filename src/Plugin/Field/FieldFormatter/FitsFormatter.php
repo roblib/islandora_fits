@@ -76,7 +76,7 @@ class FitsFormatter extends FormatterBase {
     $transformer = \Drupal::getContainer()->get('islandora_fits.transformxml');
     $fileItem = $item->getValue();
     $file = File::load($fileItem['target_id']);
-    $url = Url::fromUri(file_create_url($file->getFileUri()));
+    $url = \Drupal::service('file_url_generator')->generate($file->getFileUri());
     $link = Link::fromTextAndUrl("Link to XML", $url);
     $link = $link->toRenderable();
     $contents = file_get_contents($file->getFileUri());
