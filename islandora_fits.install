@@ -61,6 +61,7 @@ function _islandora_fits_term_exists() {
   }
 
   $query = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->getQuery()
+    ->accessCheck(TRUE)
     ->condition('vid', 'islandora_media_use')
     ->condition('field_external_uri.uri', 'https://projects.iq.harvard.edu/fits')
     ->count();

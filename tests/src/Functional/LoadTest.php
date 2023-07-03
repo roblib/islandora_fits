@@ -27,6 +27,13 @@ class LoadTest extends BrowserTestBase {
   protected $user;
 
   /**
+   * Name of theme.
+   *
+   * @var string
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {

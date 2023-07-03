@@ -78,6 +78,7 @@ function islandora_fits_entity_view(array &$build, $entity, $display, $view_mode
   if ($entity === $current_entity) {
     $medias = \Drupal::entityQuery(
       'media')
+      ->accessCheck(TRUE)
       ->condition('field_media_of', $entity->id())
       ->condition('bundle', 'fits_technical_metadata')
       ->execute();
