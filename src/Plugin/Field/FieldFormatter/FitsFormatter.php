@@ -81,7 +81,7 @@ class FitsFormatter extends FormatterBase {
     $link = $link->toRenderable();
     $contents = file_get_contents($file->getFileUri());
     if (mb_detect_encoding($contents) != 'UTF-8') {
-      $contents = utf8_encode($contents);
+      $contents = mb_convert_encoding($contents, 'UTF-8');
     }
     $output = $transformer->transformFits($contents);
     $output['#link'] = $link;
