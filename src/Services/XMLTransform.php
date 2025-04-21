@@ -5,16 +5,14 @@ namespace Drupal\islandora_fits\Services;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
 use Drupal\Core\Entity\EntityFieldManager;
-use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\media\MediaInterface;
-use DrupalCodeGenerator\Command\Drupal_8\Form\Simple;
 
 /**
- * Class XMLTransform.
+ * Transform FITS XML.
  */
 class XMLTransform extends ServiceProviderBase {
   /**
@@ -71,7 +69,7 @@ class XMLTransform extends ServiceProviderBase {
   public function transformFits($input_xml) {
     $utf8 = mb_detect_encoding($input_xml, 'UTF-8', TRUE);
     if (!$utf8) {
-      $input_xml = utf8_encode($input_xml);
+      $input_xml = mb_convert_encoding($input_xml, 'UTF-8', mb_list_encodings());
     }
     try {
       $xml = new \SimpleXMLElement($input_xml);
@@ -163,7 +161,7 @@ class XMLTransform extends ServiceProviderBase {
    *
    * Once it has these it passes them off recursively.
    *
-   * @param  \SimpleXMLElement
+   * @param \SimpleXMLElement $xml
    *   The SimpleXMLElement to parse.
    *
    * @return array
