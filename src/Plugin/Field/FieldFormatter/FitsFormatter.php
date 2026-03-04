@@ -8,7 +8,6 @@ use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\file\Entity\File;
 use Drupal\Core\Link;
-use Drupal\Core\Url;
 
 /**
  * Plugin implementation of the 'fits_formatter' formatter.
@@ -81,7 +80,7 @@ class FitsFormatter extends FormatterBase {
     $link = $link->toRenderable();
     $contents = file_get_contents($file->getFileUri());
     if (mb_detect_encoding($contents) != 'UTF-8') {
-      $contents = utf8_encode($contents);
+      $contents = mb_convert_encoding($contents, 'UTF-8', mb_list_encodings());
     }
     $output = $transformer->transformFits($contents);
     $output['#link'] = $link;
