@@ -2,11 +2,10 @@
 
 namespace Drupal\Tests\islandora_fits\Functional;
 
-use Drupal\Core\Url;
 use Drupal\Tests\BrowserTestBase;
 
 /**
- * Simple test to ensure that main page loads with module enabled.
+ * Basic smoke test for islandora_fits.
  *
  * @group islandora_fits
  */
@@ -17,37 +16,48 @@ class LoadTest extends BrowserTestBase {
    *
    * @var array
    */
-  protected static $modules = ['islandora_fits'];
+  protected static $modules = [
+    'islandora',
+    'islandora_fits',
+  ];
 
   /**
-   * A user with permission to administer site configuration.
-   *
-   * @var \Drupal\user\UserInterface
-   */
-  protected $user;
-
-  /**
-   * Name of theme.
+   * The default theme for the test site.
    *
    * @var string
    */
   protected $defaultTheme = 'stark';
 
   /**
-   * {@inheritdoc}
+   * Tests that the front page loads successfully.
    */
-  protected function setUp(): void {
-    parent::setUp();
-    $this->user = $this->drupalCreateUser(['administer site configuration']);
-    $this->drupalLogin($this->user);
+  public function testFrontPage(): void {
+    $this->drupalGet('');
+
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextNotContains('The website encountered an unexpected error');
   }
 
   /**
-   * Tests that the home page loads with a 200 response.
+   * Tests that the user page is reachable.
    */
-  public function testLoad() {
-    $this->drupalGet(Url::fromRoute('<front>'));
+  public function testUserPage(): void {
+    $this->drupalGet('/user');
+
     $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextNotContains('The website encountered an unexpected error');
   }
+  /**
+   * Tests that the media create page is reachable.
+   */
+  public function testAddMediaPage(): void {
+    $account = $this->drupalCreateUser([], NULL, TRUE);
+    $this->drupalLogin($account);
+    $this->drupalGet('/media/add/fits_technical_metadata');
+
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextNotContains('The website encountered an unexpected error');
+  }
+
 
 }
