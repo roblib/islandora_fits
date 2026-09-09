@@ -1,17 +1,13 @@
 {
   "name": "islandora-rdm/islandora_fits",
   "type": "drupal-module",
-  "description": "Enables Technical Metadata derivative generation.",
+  "description": "Integrtates the craayfits microservice into Islandora installations.",
   "keywords": [
     "Drupal"
   ],
   "license": "GPL-2.0-or-later",
-  "homepage": "https://www.drupal.org/project/islandora_fits",
   "minimum-stability": "dev",
-  "support": {
-    "issues": "https://www.drupal.org/project/issues/islandora_fits",
-    "source": "http://cgit.drupalcode.org/islandora_fits"
-  },
+
   "require": {
     "ext-SimpleXML": "*"
   }
